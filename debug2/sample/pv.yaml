@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv002
+spec:
+  capacity:
+  storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+azureFile:
+secretName: azure-secret
+shareName: wordpress
+readOnly: false
+claimRef:
+namespace: default
+name: az-files-02

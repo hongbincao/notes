@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: helloapp
+spec:
+  selector:
+    app: hello
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hellod
+  labels:
+    app: hello
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hello-world
+        image: hongbincao/demo:1.0
+        ports:
+        - containerPort: 8080
+

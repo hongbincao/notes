@@ -1,0 +1,21 @@
+FROM k8sd:0.1
+
+ADD pkg /k8s1.7.7/pkg
+ADD plugin /k8s1.7.7/plugin
+ADD staging /k8s1.7.7/staging
+ADD vendor /k8s1.7.7/vendor
+ADD cmd /k8s1.7.7/cmd
+
+RUN export GOPATH=/k8s1.7.7 && export GOROOT=/usr/local/go && export PATH=$GOROOT/bin:$GOPATH/bin:$PATH \
+&& cd $GOPATH \
+&& make all WHAT=cmd/hyperkube GOGCFLAGS="-N -l" \
+&& cd $GOPATH/src/k8s.io/kubernetes/cmd/hyperkube/ \
+&& go build -gcflags="-N -l" \
+&& rm /hyperkube \
+&& cp $GOPATH/src/k8s.io/kubernetes/cmd/hyperkube/hyperkube /
+
+
+ENV GOPATH=/k8s1.7.7 GOROOT=/usr/local/go 
+ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+
+#ENV KUBELET_CLUSTER_DNS=10.0.0.10 KUBELET_API_SERVERS=https://10.240.255.5:443 KUBELET_IMAGE=honcao:0.3 KUBELET_NETWORK_PLUGIN=kubenet KUBELET_MAX_PODS=110 DOCKER_OPTS= KUBELET_NODE_LABELS=kubernetes.io/role=master KUBELET_POD_INFRA_CONTAINER_IMAGE=gcrio.azureedge.net/google_containers/pause-amd64:3.0  KUBELET_NODE_STATUS_UPDATE_FREQUENCY=10s KUBE_CTRL_MGR_NODE_MONITOR_GRACE_PERIOD=40s  KUBE_CTRL_MGR_POD_EVICTION_TIMEOUT=5m0s KUBE_CTRL_MGR_ROUTE_RECONCILIATION_PERIOD=10s KUBELET_IMAGE_GC_HIGH_THRESHOLD=85 KUBELET_IMAGE_GC_LOW_THRESHOLD=80 KUBELET_NON_MASQUERADE_CIDR=--non-masquerade-cidr=10.0.0.0/8 KUBELET_REGISTER_NODE=--register-node=true KUBELET_REGISTER_WITH_TAINTS=--register-with-taints=node-role.kubernetes.io/master=true:NoSchedule 
